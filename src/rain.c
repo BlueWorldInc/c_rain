@@ -42,11 +42,25 @@ int main(int argc, char* argv[])
     }
     if (!init_error) {
         SDL_Delay(500);
+        
+        //rectangle
+        SDL_Rect rect = {100, 100, 100, 100};
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+        SDL_RenderFillRect(renderer, &rect); 
+        
+        //points
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+        SDL_RenderDrawPoint(renderer, 50, 50);
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+        SDL_RenderDrawPoint(renderer, 100, 100);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+        SDL_RenderDrawPoint(renderer, 150, 150);
+        
+        //affichage
         SDL_RenderPresent(renderer);
-        // SDL_Surface *ecran = NULL;
-        // ecran = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE);
-        // SDL_FillRect(surface, NULL, couleur);
+        
         pause();
+        
         SDL_DestroyWindow(window);
     }
 
