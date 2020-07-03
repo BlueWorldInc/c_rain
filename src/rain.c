@@ -1,9 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <time.h>
 #include <SDL2/SDL.h>
 
 void pause();
+void drawRainDrops(int numberOfDrop, int sizeOfDrop, SDL_Renderer* renderer);
 
 int main(int argc, char* argv[])
 {
@@ -13,6 +15,7 @@ int main(int argc, char* argv[])
     int statut = EXIT_FAILURE;
     SDL_Color orange = {255, 127, 40, 255};
     bool init_error = false;
+    srand(time(NULL));
     
     if (0 != SDL_Init(SDL_INIT_VIDEO)) {
         fprintf(stderr, "Erreur d'initialisation de la SDL : %s\n", SDL_GetError());
@@ -44,20 +47,14 @@ int main(int argc, char* argv[])
         SDL_Delay(500);
         
         //rectangle
-        SDL_Rect rect = {100, 100, 100, 100};
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-        SDL_RenderFillRect(renderer, &rect); 
-        
-        //points
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-        SDL_RenderDrawPoint(renderer, 50, 50);
-        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-        SDL_RenderDrawPoint(renderer, 100, 100);
-        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-        SDL_RenderDrawPoint(renderer, 150, 150);
+        // SDL_Rect rect = {100, 100, 100, 100};
+        // SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+        // SDL_RenderFillRect(renderer, &rect); 
+
+        drawRainDrops(50, 2, renderer);
         
         //affichage
-        SDL_RenderPresent(renderer);
+        // SDL_RenderPresent(renderer);
         
         pause();
         
@@ -67,6 +64,31 @@ int main(int argc, char* argv[])
     SDL_Quit();
     return 0;
 }
+
+void drawRainDrops(int numberOfDrop, int sizeOfDrop, SDL_Renderer* renderer) {
+    int randomOffset;
+    int count = 0;
+    int yOffset = 0;
+    // SDL_Rect rects[numberOfDrop];
+    while (count++ < 50) {
+        for (int i = 0; i < numberOfDrop; i++) {
+            randomOffset = (rand() % (500 - 0 + 1)) / 10 * 10 + 0;
+            // printf("offset: %d\n", randomOffset);
+            SDL_Rect rect = {randomOffset, 30 + yOffset, 4, 20};
+            SDL_SetRenderDrawColor(renderer, 255, 255, 200, 255);
+            SDL_RenderFillRect(renderer, &rect);
+        }
+        yOffset += 10;
+        SDL_RenderPresent(renderer);
+        SDL_Color orange = {255, 127, 40, 255};
+        SDL_SetRenderDrawColor(renderer, orange.r, orange.g, orange.b, orange.a);
+        SDL_RenderClear(renderer);
+        SDL_Delay(100);
+    }
+
+}
+
+
 
 void pause() {
     int continuer = 1;
