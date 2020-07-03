@@ -1,0 +1,9 @@
+-add sdl lib
+-open a window
+-draw a rect
+-draw multiple rect at ramdom place
+-move rect
+-delete rect
+-make an umbrella
+-make a man
+-man the man walk
