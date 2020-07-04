@@ -1,18 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
-#include <time.h>
-#include <math.h>
-#include <sdl_circle.h>
-#include <SDL2/SDL.h>
-
-#define SCREEN_WIDTH 1920
-#define SCREEN_HEIGHT 1080
-#define GROUND_Y SCREEN_HEIGHT * 0.75
-
-void rain(SDL_Renderer *renderer, int manX, int manLegs);
-void drawMan(SDL_Renderer *renderer, int manX, int manLegs);
-void drawRain(SDL_Renderer *renderer, int manX);
+#include <rain.h>
 
 int main(int argc, char *argv[])
 {
@@ -58,20 +44,18 @@ int main(int argc, char *argv[])
     }
     if (!init_error)
     {
-        int manX = 200;
-        int manLegs = 0;
-        int manLegsDirection = 1;
+
+        Man* man = NULL;
+        man = malloc(sizeof(*man));
+        (*man).manX = 200;
+        (*man).manLegs = 0;
+        (*man).manLegsDirection = 1;
         while (run) {
             SDL_Event event;
             SDL_PollEvent(&event);
-            if (manLegs >= 20) {
-                manLegsDirection = -1;
-            } else if (manLegs <= 0) {
-                manLegsDirection = 1;
-            } 
-            // change plus to minus for matrix effect ;)
-            manLegs = (manLegs + (manLegsDirection * 2));
-            rain(renderer, manX++, manLegs);
+
+            rain(renderer, man);
+
             SDL_Delay(75);
             switch (event.type) {
                 case SDL_KEYDOWN:
@@ -86,7 +70,7 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void rain(SDL_Renderer *renderer, int manX, int manLegs) {
+void rain(SDL_Renderer *renderer, Man* man) {
     SDL_Color black = {0, 0, 0, 255};
     SDL_Color white = {255, 255, 255, 255};
 
@@ -98,15 +82,26 @@ void rain(SDL_Renderer *renderer, int manX, int manLegs) {
     // draw ground
     SDL_RenderDrawLine(renderer, 0, GROUND_Y, SCREEN_WIDTH, GROUND_Y);
     // draw man
-    drawMan(renderer, manX, manLegs);
+    drawMan(renderer, man);
     // draw rain
-    drawRain(renderer, manX);
+    drawRain(renderer, (*man).manX);
     
 
     SDL_RenderPresent(renderer);
 }
 
-void drawMan(SDL_Renderer *renderer, int manX, int manLegs) {
+void drawMan(SDL_Renderer *renderer, Man* man) {
+        // move man
+            (*man).manX = ((*man).manX + 2) % SCREEN_WIDTH;
+            if ((*man).manLegs >= 20) {
+                (*man).manLegsDirection = -1;
+            } else if ((*man).manLegs <= 0) {
+                (*man).manLegsDirection = 1;
+            } 
+            // change plus to minus for matrix effect ;)
+            (*man).manLegs = ((*man).manLegs + ((*man).manLegsDirection * 2));
+            int manX = (*man).manX;
+            int manLegs = (*man).manLegs;
         // draw man
             //head
             SDL_RenderFillCircle(renderer, manX, GROUND_Y - 90, 10);
@@ -127,12 +122,13 @@ void drawMan(SDL_Renderer *renderer, int manX, int manLegs) {
 void drawRain(SDL_Renderer *renderer, int manX) {
     int rx = 0;
     int ry = 0;
+    int dropLength = 4;
     for (int i = 0; i < 400; i++) {
         rx = rand() % SCREEN_WIDTH;
         ry = rand() % SCREEN_HEIGHT;
-        if (ry < GROUND_Y - 4) {
-            if (ry < GROUND_Y - 120 || (ry > GROUND_Y - 120 && (rx < manX - 20 || rx > manX + 60))) {
-                SDL_RenderDrawLine(renderer, rx, ry, rx + 1, ry + 4);
+        if (ry < GROUND_Y - dropLength) {
+            if (ry < GROUND_Y - 120 - dropLength || (ry > GROUND_Y - 120 - dropLength && (rx < manX - 20 || rx > manX + 60))) {
+                SDL_RenderDrawLine(renderer, rx, ry, rx + 1, ry + dropLength);
             }
         }
     }
