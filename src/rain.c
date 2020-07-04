@@ -69,6 +69,7 @@ int main(int argc, char *argv[])
             } else if (manLegs <= 0) {
                 manLegsDirection = 1;
             } 
+            // change plus to minus for matrix effect ;)
             manLegs = (manLegs + (manLegsDirection * 2));
             rain(renderer, manX++, manLegs);
             SDL_Delay(75);
